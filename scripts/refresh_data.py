@@ -4,7 +4,7 @@ UniCapture Daily Data Refresh
 Fetches active tenant count + DRR from Redash, updates KPI card in HTML.
 """
 
-import os, re, time, json, math, calendar, requests
+import os, re, json, math, calendar, requests
 from datetime import datetime, date
 
 # ── Config ──────────────────────────────────────────────────────────────────
@@ -17,50 +17,32 @@ MONTH_NAMES   = {1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',
                  7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'}
 
 # ── Redash helpers ───────────────────────────────────────────────────────────
-def redash_post_and_poll(query_id, api_key, parameters=None, timeout=120):
-    """Trigger a Redash query execution and return rows when done."""
-    headers = {'Authorization': f'Key {api_key}', 'Content-Type': 'application/json'}
-    payload = {'max_age': 0}
-    if parameters:
-        payload['parameters'] = parameters
+def redash_get_cached(query_id, api_key, timeout=30):
+    """Fetch the latest cached Redash result via GET.
 
-    resp = requests.post(f'{REDASH_BASE}/api/queries/{query_id}/results',
-                         json=payload, headers=headers, timeout=30)
+    Uses the read-only results endpoint which works from any IP without
+    triggering a fresh execution (fresh execution via POST is blocked from
+    external IPs like GitHub Actions runners).
+    Returns the rows list, or raises on HTTP error.
+    """
+    headers = {'Authorization': f'Key {api_key}'}
+    resp = requests.get(
+        f'{REDASH_BASE}/api/queries/{query_id}/results',
+        headers=headers, timeout=timeout
+    )
     resp.raise_for_status()
-    data = resp.json()
-
-    # Occasionally returns result directly
-    if 'query_result' in data:
-        return data['query_result']['data']['rows']
-
-    job_id   = data['job']['id']
-    deadline = time.time() + timeout
-
-    while time.time() < deadline:
-        time.sleep(3)
-        job = requests.get(f'{REDASH_BASE}/api/jobs/{job_id}',
-                           headers=headers, timeout=15).json()['job']
-        if job['status'] == 3:
-            qrid   = job['query_result_id']
-            result = requests.get(f'{REDASH_BASE}/api/query_results/{qrid}',
-                                  headers=headers, timeout=15).json()
-            return result['query_result']['data']['rows']
-        if job['status'] == 4:
-            raise RuntimeError(f'Query {query_id} failed: {job.get("error")}')
-
-    raise TimeoutError(f'Query {query_id} timed out after {timeout}s')
+    return resp.json()['query_result']['data']['rows']
 
 
 # ── Data fetching ────────────────────────────────────────────────────────────
 def get_active_count():
-    rows = redash_post_and_poll(8019, API_KEY_VMS, {'Status': ['ACTIVE']})
+    rows = redash_get_cached(8019, API_KEY_VMS)
     return int(rows[0].get('count(*)', 0))
 
 
 def get_drr_monthly():
     """Return list of (year, month, drr_per_day) for last 5 months, oldest→newest."""
-    rows = redash_post_and_poll(8432, API_KEY_DRR,
-                                {'granularity': 'monthly', 'Status': ['ACTIVE']})
+    rows = redash_get_cached(8432, API_KEY_DRR)
     if not rows:
         return []
 
