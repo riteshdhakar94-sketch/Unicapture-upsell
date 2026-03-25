@@ -1,0 +1,10 @@
+*.xlsx
+*.pptx
+*.docx
+*.csv
+*.py
+*.png
+*.md
+~$*
+outputs/
+.claude/
