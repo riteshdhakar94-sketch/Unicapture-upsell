@@ -895,13 +895,12 @@ function autoSyncRow(rowData) {
   var qs = Object.keys(params).map(function(k) {
     return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] != null ? params[k] : '');
   }).join('&');
-  fetch(GAS_URL + '?' + qs)
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.status !== 'ok' && d.status !== 'exists') {
-        console.warn('UniCapture Sheet sync:', d);
-      }
-    })
+  // mode:'no-cors' is required: GAS redirects cross-origin requests (302)
+  // and browsers block reading those redirect responses without CORS headers.
+  // GET + no-cors lets the browser follow the redirect; doGet executes on GAS.
+  // Response is opaque (unreadable) but the sheet write still happens.
+  fetch(GAS_URL + '?' + qs, { mode: 'no-cors' })
+    .then(function() { console.log('UniCapture Sheet sync sent: ' + (rowData.code || '')); })
     .catch(function(e) { console.warn('Sheet sync failed:', e); });
 }
 
