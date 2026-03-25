@@ -2,9 +2,10 @@
 *.pptx
 *.docx
 *.csv
-*.py
 *.png
 *.md
 ~$*
 outputs/
 .claude/
+# Allow pipeline scripts
+!scripts/*.py

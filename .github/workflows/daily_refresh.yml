@@ -1,0 +1,72 @@
+name: Daily UniCapture Data Refresh
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 7:30 AM IST (2:00 AM UTC) every day
+  workflow_dispatch:       # Allow manual trigger from GitHub Actions tab
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # needed to commit + push updated HTML
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch Redash data and update HTML
+        id: refresh
+        env:
+          REDASH_API_KEY_VMS: ${{ secrets.REDASH_API_KEY_VMS }}
+          REDASH_API_KEY_DRR: ${{ secrets.REDASH_API_KEY_DRR }}
+        run: python scripts/refresh_data.py
+
+      - name: Commit and push if HTML changed
+        run: |
+          git config user.email "unicapture-bot@unicommerce.com"
+          git config user.name  "UniCapture Bot"
+          git diff --quiet UniCapture_Prospects_Preview.html || (
+            git add UniCapture_Prospects_Preview.html &&
+            git commit -m "Daily refresh $(date +'%d %b %Y'): auto-update active tenants + DRR" &&
+            git push
+          )
+
+      - name: Send email notification
+        if: always() && secrets.EMAIL_USER != ''
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port:    587
+          secure:         false
+          username:       ${{ secrets.EMAIL_USER }}
+          password:       ${{ secrets.EMAIL_PASS }}
+          subject:        "UniCapture Refresh — ${{ job.status == 'success' && '✅ Done' || '❌ Failed' }} — ${{ github.run_id }}"
+          to:             ritesh.dhakar@unicommerce.com
+          from:           UniCapture Bot <${{ secrets.EMAIL_USER }}>
+          html_body: |
+            <p>Hi Ritesh,</p>
+            <p>Daily UniCapture data refresh has completed.</p>
+            <table style="border-collapse:collapse;font-family:sans-serif;font-size:14px">
+              <tr><td style="padding:6px 12px;font-weight:bold">Status</td>
+                  <td style="padding:6px 12px">${{ job.status }}</td></tr>
+              <tr><td style="padding:6px 12px;font-weight:bold">Run time</td>
+                  <td style="padding:6px 12px">${{ github.run_id }}</td></tr>
+            </table>
+            <br>
+            <a href="https://riteshdhakar94-sketch.github.io/Unicapture-upsell/UniCapture_Prospects_Preview.html"
+               style="background:#7C3AED;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none">
+              Open Dashboard →
+            </a>
+            <br><br>
+            <a href="https://github.com/riteshdhakar94-sketch/Unicapture-upsell/actions">
+              View run logs on GitHub
+            </a>
