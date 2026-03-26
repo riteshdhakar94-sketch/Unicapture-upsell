@@ -102,6 +102,9 @@ body{font-family:-apple-system,'Inter',sans-serif;background:#EEF2F7;color:#1E29
   border-radius:7px;padding:6px 12px;width:280px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .section-search input{border:none;outline:none;font-size:12px;color:#1E293B;background:transparent;flex:1}
 .section-search input::placeholder{color:#CBD5E1}
+/* Hide all seller rows by default — shown only when search has input */
+#std-body tr,#int-body tr,#mix-body tr,#fk-body tr{display:none}
+.tbl-search-prompt{text-align:center;padding:28px 16px;color:#94A3B8;font-size:12px}
 
 /* ── Table (for FK/Myntra section) ── */
 .table-wrap{background:#fff;border-radius:10px;border:1px solid #E2E8F0;
@@ -213,7 +216,7 @@ Your UniCapture trial is already active on your account. Create a folder with yo
       <th class="tc">Priority</th><th class="tr">Return Rate</th>
       <th class="tr">Monthly Shipments</th><th class="tr">Monthly Disputes</th>
       <th class="tr">Avg Order Value</th><th class="tc">VMS Type</th>
-    </tr></thead><tbody id="std-body"><tr class="row-hot" data-name="kvs"><td class="tc rank">1</td><td class="tl bold">kvs</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">40.6%</td><td class="tr">75,951</td><td class="tr">30,864/mo</td><td class="tr">&#8377;1,490</td><td class="tc"><span class="vms-pill vms-std ">Standalone VMS</span></td></tr>
+    </tr></thead><tbody id="std-body"><tr class="tbl-search-prompt-row" style="display:table-row"><td colspan="9" class="tbl-search-prompt">&#128269; Search a seller name above to view data</td></tr><tr class="row-hot" data-name="kvs"><td class="tc rank">1</td><td class="tl bold">kvs</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">40.6%</td><td class="tr">75,951</td><td class="tr">30,864/mo</td><td class="tr">&#8377;1,490</td><td class="tc"><span class="vms-pill vms-std ">Standalone VMS</span></td></tr>
 <tr class="row-hot" data-name="pegasussports"><td class="tc rank">2</td><td class="tl bold">pegasussports</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">38.7%</td><td class="tr">23,213</td><td class="tr">8,993/mo</td><td class="tr">&#8377;1,399</td><td class="tc"><span class="vms-pill vms-std ">Standalone VMS</span></td></tr>
 <tr class="row-hot" data-name="kamini"><td class="tc rank">3</td><td class="tl bold">kamini</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">38.5%</td><td class="tr">38,733</td><td class="tr">14,912/mo</td><td class="tr">&#8377;1,170</td><td class="tc"><span class="vms-pill vms-std ">Standalone VMS</span></td></tr>
 <tr class="row-hot" data-name="ratanlalsons"><td class="tc rank">4</td><td class="tl bold">ratanlalsons</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">43.8%</td><td class="tr">19,408</td><td class="tr">8,497/mo</td><td class="tr">&#8377;490</td><td class="tc"><span class="vms-pill vms-std ">Standalone VMS</span></td></tr>
@@ -399,7 +402,7 @@ Want me to show you how it looks on the WMS you're already running?<button class
       <th class="tc">Priority</th><th class="tr">Return Rate</th>
       <th class="tr">Monthly Shipments</th><th class="tr">Monthly Disputes</th>
       <th class="tr">Avg Order Value</th><th class="tc">VMS Type</th>
-    </tr></thead><tbody id="int-body"><tr class="row-hot" data-name="vastralady"><td class="tc rank">1</td><td class="tl bold">vastralady</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">31.8%</td><td class="tr">30,839</td><td class="tr">9,792/mo</td><td class="tr">&#8377;1,487</td><td class="tc"><span class="vms-pill vms-int ">Integrated VMS</span></td></tr>
+    </tr></thead><tbody id="int-body"><tr class="tbl-search-prompt-row" style="display:table-row"><td colspan="9" class="tbl-search-prompt">&#128269; Search a seller name above to view data</td></tr><tr class="row-hot" data-name="vastralady"><td class="tc rank">1</td><td class="tl bold">vastralady</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">31.8%</td><td class="tr">30,839</td><td class="tr">9,792/mo</td><td class="tr">&#8377;1,487</td><td class="tc"><span class="vms-pill vms-int ">Integrated VMS</span></td></tr>
 <tr class="row-hot" data-name="sidhbali"><td class="tc rank">2</td><td class="tl bold">sidhbali</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">32.9%</td><td class="tr">26,942</td><td class="tr">8,853/mo</td><td class="tr">&#8377;984</td><td class="tc"><span class="vms-pill vms-int ">Integrated VMS</span></td></tr>
 <tr class="row-hot" data-name="mamtafabricsprivatelimited"><td class="tc rank">3</td><td class="tl bold">mamtafabricsprivatelimited</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">32.6%</td><td class="tr">20,842</td><td class="tr">6,798/mo</td><td class="tr">&#8377;1,006</td><td class="tc"><span class="vms-pill vms-int ">Integrated VMS</span></td></tr>
 <tr class="row-hot" data-name="sunshinelifestyle"><td class="tc rank">4</td><td class="tl bold">sunshinelifestyle</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">35.2%</td><td class="tr">53,109</td><td class="tr">18,693/mo</td><td class="tr">&#8377;1,104</td><td class="tc"><span class="vms-pill vms-int ">Integrated VMS</span></td></tr>
@@ -524,7 +527,7 @@ Can I show you what full-facility coverage looks like on your account?<button cl
       <th class="tc">Priority</th><th class="tr">Return Rate</th>
       <th class="tr">Monthly Shipments</th><th class="tr">Monthly Disputes</th>
       <th class="tr">Avg Order Value</th><th class="tc">VMS Type</th>
-    </tr></thead><tbody id="mix-body"><tr class="row-hot" data-name="keshav gupta"><td class="tc rank">1</td><td class="tl bold">Keshav Gupta</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">40.1%</td><td class="tr">19,228</td><td class="tr">7,706/mo</td><td class="tr">&#8377;1,295</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
+    </tr></thead><tbody id="mix-body"><tr class="tbl-search-prompt-row" style="display:table-row"><td colspan="9" class="tbl-search-prompt">&#128269; Search a seller name above to view data</td></tr><tr class="row-hot" data-name="keshav gupta"><td class="tc rank">1</td><td class="tl bold">Keshav Gupta</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">40.1%</td><td class="tr">19,228</td><td class="tr">7,706/mo</td><td class="tr">&#8377;1,295</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
 <tr class="row-hot" data-name="keshvifashion"><td class="tc rank">2</td><td class="tl bold">keshvifashion</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">35.5%</td><td class="tr">106,494</td><td class="tr">37,821/mo</td><td class="tr">&#8377;1,124</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
 <tr class="row-hot" data-name="street9fashions"><td class="tc rank">3</td><td class="tl bold">street9fashions</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">40.9%</td><td class="tr">61,229</td><td class="tr">25,064/mo</td><td class="tr">&#8377;976</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
 <tr class="row-hot" data-name="rightenterprises"><td class="tc rank">4</td><td class="tl bold">RightEnterprises</td><td class="tc"><span class="seg-pill smb">SMB</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-red">29.6%</td><td class="tr">28,589</td><td class="tr">8,454/mo</td><td class="tr">&#8377;1,229</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
@@ -770,7 +773,7 @@ We can have you live across your facilities in 1&ndash;2 days. Want to run throu
       <th class="tc">Priority</th><th class="tr">Return Rate</th>
       <th class="tr">Monthly Shipments</th><th class="tr">Monthly Disputes</th>
       <th class="tr">Avg Order Value</th><th class="tc">VMS Type</th>
-    </tr></thead><tbody id="fk-body"><tr class="row-warm" data-name="mamaearth"><td class="tc rank">1</td><td class="tl bold">MamaEarth</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge warm">Warm</span></td><td class="tr ">10.9%</td><td class="tr">1,953,545</td><td class="tr">212,314/mo</td><td class="tr">&#8377;491</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
+    </tr></thead><tbody id="fk-body"><tr class="tbl-search-prompt-row" style="display:table-row"><td colspan="9" class="tbl-search-prompt">&#128269; Search a seller name above to view data</td></tr><tr class="row-warm" data-name="mamaearth"><td class="tc rank">1</td><td class="tl bold">MamaEarth</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge warm">Warm</span></td><td class="tr ">10.9%</td><td class="tr">1,953,545</td><td class="tr">212,314/mo</td><td class="tr">&#8377;491</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
 <tr class="row-warm" data-name="mosaicwellnesspvtlmt"><td class="tc rank">2</td><td class="tl bold">mosaicwellnesspvtlmt</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge warm">Warm</span></td><td class="tr ">7.7%</td><td class="tr">906,410</td><td class="tr">70,114/mo</td><td class="tr">&#8377;731</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
 <tr class="row-hot" data-name="plix"><td class="tc rank">3</td><td class="tl bold">plix</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge hot">Hot</span></td><td class="tr c-amber">20.0%</td><td class="tr">891,655</td><td class="tr">178,582/mo</td><td class="tr">&#8377;731</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
 <tr class="row-warm" data-name="dotandkey"><td class="tc rank">4</td><td class="tl bold">dotandkey</td><td class="tc"><span class="seg-pill ent">Enterprise</span></td><td class="tc"><span class="badge warm">Warm</span></td><td class="tr ">8.0%</td><td class="tr">654,723</td><td class="tr">52,106/mo</td><td class="tr">&#8377;864</td><td class="tc"><span class="vms-pill vms-mix ">Mixed VMS</span></td></tr>
@@ -1148,8 +1151,16 @@ function filterSection(tbodyId, val) {
   var search = val.trim().toLowerCase();
   var tbody  = document.getElementById(tbodyId);
   if (!tbody) return;
-  tbody.querySelectorAll('tr').forEach(function(row) {
-    var show = !search || (row.dataset.name && row.dataset.name.indexOf(search) !== -1);
+  var prompt = tbody.querySelector('.tbl-search-prompt-row');
+  if (!search) {
+    // Hide all data rows, show prompt
+    tbody.querySelectorAll('tr:not(.tbl-search-prompt-row)').forEach(function(r){ r.style.display = 'none'; });
+    if (prompt) prompt.style.display = '';
+    return;
+  }
+  if (prompt) prompt.style.display = 'none';
+  tbody.querySelectorAll('tr:not(.tbl-search-prompt-row)').forEach(function(row) {
+    var show = row.dataset.name && row.dataset.name.indexOf(search) !== -1;
     row.style.display = show ? '' : 'none';
   });
 }
