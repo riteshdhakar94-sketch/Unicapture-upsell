@@ -887,21 +887,20 @@ function exportPitchedCSV() {
 var GAS_URL = 'https://script.google.com/a/macros/unicommerce.com/s/AKfycbwKOeKab3zZcLMBnkxUmJcTRIeIz8bIeUnsmi6HzxBb3PopbVvU0OOEn99FGyePyvgN/exec';
 function autoSyncRow(rowData) {
   if (!GAS_URL) return;
-  // Use GET + URL params to avoid the POST→GET redirect issue that GAS causes
-  // when accessed cross-origin (mode:'no-cors' POST silently converts to GET
-  // on redirect, so doPost never fires). doGet now handles writes when
-  // action=pitched is present.
   var params = Object.assign({ action: 'pitched', date: new Date().toISOString().slice(0, 10) }, rowData);
   var qs = Object.keys(params).map(function(k) {
     return encodeURIComponent(k) + '=' + encodeURIComponent(params[k] != null ? params[k] : '');
   }).join('&');
-  // mode:'no-cors' is required: GAS redirects cross-origin requests (302)
-  // and browsers block reading those redirect responses without CORS headers.
-  // GET + no-cors lets the browser follow the redirect; doGet executes on GAS.
-  // Response is opaque (unreadable) but the sheet write still happens.
-  fetch(GAS_URL + '?' + qs, { mode: 'no-cors' })
-    .then(function() { console.log('UniCapture Sheet sync sent: ' + (rowData.code || '')); })
-    .catch(function(e) { console.warn('Sheet sync failed:', e); });
+  // Use Image() instead of fetch: image requests include cookies by default
+  // (credentialed), follow redirects freely, and have no CORS restrictions.
+  // fetch() with mode:'no-cors' omits cookies cross-origin so GAS blocks the
+  // request before execution. Image() sends the Google session cookie so GAS
+  // authenticates and runs doGet. Response is irrelevant (fire-and-forget).
+  var img = new Image();
+  img.src = GAS_URL + '?' + qs;
+  img.onload = img.onerror = function() {
+    console.log('UniCapture Sheet sync sent: ' + (rowData.code || ''));
+  };
 }
 
 
