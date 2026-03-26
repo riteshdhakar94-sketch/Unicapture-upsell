@@ -169,15 +169,31 @@ function doGet(e) {
     }
   }
 
+  // ── List path — returns all pitched codes so dashboard can sync shared state ──
+  // Called via JSONP: ?action=list&callback=__ucPitchedSync
+  if (params.action === 'list') {
+    try {
+      var sheet = getOrCreateSheet();
+      var data  = sheet.getDataRange().getValues();
+      var codes = [];
+      for (var i = 1; i < data.length; i++) {
+        if (data[i][0]) codes.push(String(data[i][0]));
+      }
+      return jsonpRespond(params.callback, { status: 'ok', codes: codes });
+    } catch (err) {
+      return jsonpRespond(params.callback, { status: 'error', message: err.toString() });
+    }
+  }
+
   // ── Health check (default) — open this URL in a browser tab to confirm deployment is live ──
   var ss    = SpreadsheetApp.openById(SHEET_ID);
   var sheet = ss.getSheetByName(SHEET_TAB);
   var rowCount = sheet ? Math.max(sheet.getLastRow() - 1, 0) : 0;
-  return respond({
-    status:    'UniCapture Sync Active',
-    sheet:     SHEET_ID,
-    tab:       SHEET_TAB,
-    synced:    rowCount
+  return jsonpRespond(params.callback, {
+    status:  'UniCapture Sync Active',
+    sheet:   SHEET_ID,
+    tab:     SHEET_TAB,
+    synced:  rowCount
   });
 }
 
@@ -210,5 +226,19 @@ function testWrite() {
 function respond(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Wraps response as JSONP if callback param is present, else plain JSON.
+// JSONP is used by the dashboard to read data cross-origin without CORS issues.
+function jsonpRespond(callback, obj) {
+  var json = JSON.stringify(obj);
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + '(' + json + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService
+    .createTextOutput(json)
     .setMimeType(ContentService.MimeType.JSON);
 }

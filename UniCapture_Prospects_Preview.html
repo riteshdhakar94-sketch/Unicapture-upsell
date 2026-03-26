@@ -867,6 +867,37 @@ function loadPitched() {
   }
 }
 
+/* ── Shared pitched state — load from Google Sheet via JSONP ──
+   Runs after localStorage load. Marks any sellers pitched by other
+   team members that aren't already marked in this browser.        ── */
+function loadPitchedFromSheet() {
+  if (!GAS_URL) return;
+  window.__ucPitchedSync = function(data) {
+    if (!data || data.status !== 'ok' || !Array.isArray(data.codes)) return;
+    data.codes.forEach(function(code) {
+      var c = String(code).toLowerCase();
+      // Already marked locally — skip
+      if (localStorage.getItem('uc_pitched_' + c)) return;
+      // Find checkbox in table
+      var chk = document.querySelector('.pitched-chk[data-code="' + c.replace(/"/g,'&quot;').replace(/'/g,'&#39;') + '"]');
+      if (!chk || chk.checked) return;
+      // Mark as pitched (sheet is source of truth — no date available, use today)
+      var today = new Date().toISOString().slice(0,10);
+      localStorage.setItem('uc_pitched_' + c, JSON.stringify({ code: c, date: today }));
+      chk.checked = true; chk.disabled = true;
+      applyPitchedStyle(chk);
+      var hid = c.replace(/[^a-zA-Z0-9]/g, '_');
+      var el = document.getElementById('pd-' + hid);
+      if (el) el.textContent = today;
+    });
+    delete window.__ucPitchedSync;
+  };
+  var s = document.createElement('script');
+  s.src = GAS_URL + '?action=list&callback=__ucPitchedSync';
+  s.onerror = function() { console.warn('UniCapture: could not load pitched state from sheet'); };
+  document.head.appendChild(s);
+}
+
 function exportPitchedCSV() {
   var rows = [['Tenant Code','Seller Name','Pitched Date']];
   for (var k in localStorage) {
@@ -1111,7 +1142,11 @@ function addPitchButtons() {
   });
 }
 
-window.addEventListener('load', function(){ loadPitched(); addFkPct(); addPitchButtons(); addRowClicks(); });
+window.addEventListener('load', function(){
+  loadPitched();           // Local state first — instant
+  loadPitchedFromSheet();  // Shared state from sheet — fills in teammates' pitches
+  addFkPct(); addPitchButtons(); addRowClicks();
+});
 </script>
 
 
