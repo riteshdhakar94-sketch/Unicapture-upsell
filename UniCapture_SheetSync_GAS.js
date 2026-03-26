@@ -2,7 +2,7 @@
  * UniCapture Prospect Dashboard — Google Sheets Auto-Sync
  * ─────────────────────────────────────────────────────────
  * Already deployed at:
- * https://script.google.com/a/macros/unicommerce.com/s/AKfycbwKOeKab3zZcLMBnkxUmJcTRIeIz8bIeUnsmi6HzxBb3PopbVvU0OOEn99FGyePyvgN/exec
+ * https://script.google.com/macros/s/AKfycbwbs_xnxoK3DUjs0O_5XiOc7DHLWy1FojPSf0pIIDiXVTmMIy8bEnrDR6R57kAFXFxB/exec
  *
  * To redeploy after edits: Deploy → Manage deployments → Edit → New version
  */

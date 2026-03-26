@@ -884,7 +884,7 @@ function exportPitchedCSV() {
 }
 
 /* ── Google Sheet auto-sync ── */
-var GAS_URL = 'https://script.google.com/a/macros/unicommerce.com/s/AKfycbwKOeKab3zZcLMBnkxUmJcTRIeIz8bIeUnsmi6HzxBb3PopbVvU0OOEn99FGyePyvgN/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbwbs_xnxoK3DUjs0O_5XiOc7DHLWy1FojPSf0pIIDiXVTmMIy8bEnrDR6R57kAFXFxB/exec';
 function autoSyncRow(rowData) {
   if (!GAS_URL) return;
   var params = Object.assign({ action: 'pitched', date: new Date().toISOString().slice(0, 10) }, rowData);
