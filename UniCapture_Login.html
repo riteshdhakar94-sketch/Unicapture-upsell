@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UniCapture — Login</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#F0F4F8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+
+.card{background:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.10);
+  padding:40px 36px;width:100%;max-width:400px}
+
+.logo-wrap{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.logo-icon{width:38px;height:38px;background:#1E3A5F;border-radius:9px;
+  display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:22px;height:22px}
+.logo-title{font-size:18px;font-weight:700;color:#1E3A5F;letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:#64748B;margin-top:1px}
+
+h2{font-size:15px;font-weight:600;color:#1E3A5F;margin-bottom:4px}
+.sub{font-size:12.5px;color:#64748B;margin-bottom:24px}
+
+.field{margin-bottom:16px}
+label{display:block;font-size:11.5px;font-weight:600;color:#374151;
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+input{width:100%;padding:10px 13px;border:1.5px solid #E2E8F0;border-radius:8px;
+  font-size:13.5px;color:#1E293B;outline:none;transition:border .15s}
+input:focus{border-color:#2D5A8E}
+input.err{border-color:#EF4444}
+
+.err-msg{font-size:11.5px;color:#EF4444;margin-top:5px;display:none}
+.err-msg.show{display:block}
+
+.btn{width:100%;padding:11px;background:#1E3A5F;color:#fff;border:none;
+  border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:background .15s;margin-top:8px}
+.btn:hover{background:#2D5A8E}
+.btn:disabled{background:#94A3B8;cursor:not-allowed}
+
+.footer{text-align:center;margin-top:20px;font-size:11px;color:#94A3B8}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 10l-4 4l6 6l4-16l-18 7l4 2l2 6l3-4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-title">UniCapture</div>
+      <div class="logo-sub">Upsell Intelligence · Unicommerce</div>
+    </div>
+  </div>
+
+  <h2>Sign in to continue</h2>
+  <p class="sub">Use your Unicommerce email address and team password.</p>
+
+  <form id="login-form" autocomplete="off">
+    <div class="field">
+      <label>Work Email</label>
+      <input type="email" id="email-inp" placeholder="yourname@unicommerce.com" autocomplete="email">
+      <div class="err-msg" id="email-err">Must be a @unicommerce.com address.</div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="pass-inp" placeholder="Team password" autocomplete="current-password">
+      <div class="err-msg" id="pass-err">Incorrect password. Please try again.</div>
+    </div>
+    <button type="submit" class="btn" id="login-btn">Sign In</button>
+  </form>
+
+  <div class="footer">UniCapture &mdash; Internal use only &middot; Unicommerce</div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  CONFIGURATION — change password as needed
+// ─────────────────────────────────────────────
+var TEAM_PASSWORD = 'UniCapture@2026';
+var ALLOWED_DOMAIN = 'unicommerce.com';
+var SESSION_HOURS  = 8;
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxycMPxcJszbsnjYhPHfq7U1vJXGIk3UEr9K0vZzFjdiL2VQOnttXt8xMIRAz05m0_r/exec';
+
+// Default redirect after login (overridden by ?redirect= param)
+var DEFAULT_REDIRECT = 'UniCapture_Prospects_Secure.html';
+
+// ─────────────────────────────────────────────
+//  If already logged in, skip login page
+// ─────────────────────────────────────────────
+(function() {
+  var s = localStorage.getItem('uc_session');
+  if (!s) return;
+  try {
+    var d = JSON.parse(s);
+    if (d.email && d.ts && (Date.now() - d.ts) < SESSION_HOURS * 3600000) {
+      var params = new URLSearchParams(window.location.search);
+      window.location.replace(params.get('redirect') || DEFAULT_REDIRECT);
+    }
+  } catch(e) {}
+})();
+
+// ─────────────────────────────────────────────
+//  Login form handler
+// ─────────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  var emailEl = document.getElementById('email-inp');
+  var passEl  = document.getElementById('pass-inp');
+  var emailErr = document.getElementById('email-err');
+  var passErr  = document.getElementById('pass-err');
+  var btn      = document.getElementById('login-btn');
+
+  // Reset
+  emailEl.classList.remove('err'); emailErr.classList.remove('show');
+  passEl.classList.remove('err');  passErr.classList.remove('show');
+
+  var email = emailEl.value.trim().toLowerCase();
+  var pass  = passEl.value;
+  var valid = true;
+
+  // Validate domain
+  if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
+    emailEl.classList.add('err');
+    emailErr.classList.add('show');
+    valid = false;
+  }
+
+  // Validate password
+  if (pass !== TEAM_PASSWORD) {
+    passEl.classList.add('err');
+    passErr.classList.add('show');
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  // Store session
+  localStorage.setItem('uc_session', JSON.stringify({
+    email: email,
+    ts: Date.now()
+  }));
+
+  // Log to GAS (fire and forget)
+  logLoginToSheet(email);
+
+  // Redirect
+  var params = new URLSearchParams(window.location.search);
+  setTimeout(function() {
+    window.location.replace(params.get('redirect') || DEFAULT_REDIRECT);
+  }, 400);
+});
+
+// ─────────────────────────────────────────────
+//  Log session to Google Sheet via GAS
+// ─────────────────────────────────────────────
+function logLoginToSheet(email) {
+  if (!GAS_URL) return;
+  var img = new Image();
+  img.src = GAS_URL
+    + '?action=logLogin'
+    + '&email=' + encodeURIComponent(email)
+    + '&ua='    + encodeURIComponent(navigator.userAgent.substring(0, 120))
+    + '&ts='    + encodeURIComponent(new Date().toISOString());
+}
+</script>
+</body>
+</html>

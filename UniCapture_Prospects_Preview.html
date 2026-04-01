@@ -21,6 +21,11 @@ a{color:inherit;text-decoration:none}
 .btn-export{background:rgba(255,255,255,.12);color:#fff;padding:7px 14px;border-radius:7px;
   font-size:11.5px;font-weight:500;border:1px solid rgba(255,255,255,.25);cursor:pointer;transition:background .15s}
 .btn-export:hover{background:rgba(255,255,255,.22)}
+.btn-logout{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);padding:7px 14px;border-radius:7px;
+  font-size:11.5px;font-weight:500;border:1px solid rgba(255,255,255,.18);cursor:pointer;transition:all .15s}
+.btn-logout:hover{background:rgba(255,80,80,.25);color:#fff;border-color:rgba(255,100,100,.4)}
+.uc-user{font-size:11px;color:rgba(255,255,255,.55);max-width:180px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;align-self:center}
 
 .analysis{padding:16px 28px 0;display:flex;gap:12px;flex-wrap:wrap}
 .kpi-card{background:#fff;border-radius:10px;padding:13px 17px;min-width:118px;flex:1;
@@ -205,6 +210,21 @@ tr:hover .pitch-action-btn{opacity:1}
 .pitch-action-btn:hover{background:#EFF6FF}
 
 </style>
+<script>
+/* ── Auth guard — runs before page renders ── */
+(function(){
+  var SESSION_HOURS = 8;
+  var s = localStorage.getItem('uc_session');
+  if (!s) { window.location.replace('UniCapture_Login.html'); return; }
+  try {
+    var d = JSON.parse(s);
+    if (!d.email || !d.ts || (Date.now() - d.ts) > SESSION_HOURS * 3600000) {
+      localStorage.removeItem('uc_session');
+      window.location.replace('UniCapture_Login.html');
+    }
+  } catch(e) { window.location.replace('UniCapture_Login.html'); }
+})();
+</script>
 </head>
 <body>
 
@@ -217,6 +237,8 @@ tr:hover .pitch-action-btn{opacity:1}
     <a class="btn-export" href="https://docs.google.com/spreadsheets/d/13Y3g1VeeQXjcRG-u48LQaLQ3ZqixYFeprOEMMOsJPKI/edit?gid=0#gid=0" target="_blank" title="View Pitched Sellers">&#9654; View Pitched Sheet</a>
     <button class="btn-export" onclick="exportPitchedCSV()" title="Download CSV">&#8595; CSV</button>
     <a class="btn-pitch" href="UniCapture_Pitch_Guide.html" target="_blank">&#9654; Open Pitch Guide</a>
+    <span class="uc-user" id="uc-user-badge"></span>
+    <button class="btn-logout" onclick="(function(){localStorage.removeItem('uc_session');window.location.replace('UniCapture_Login.html');})()">Sign Out</button>
   </div>
 </div>
 
@@ -915,7 +937,7 @@ function exportPitchedCSV() {
 }
 
 /* ── Google Sheet auto-sync ── */
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbwbs_xnxoK3DUjs0O_5XiOc7DHLWy1FojPSf0pIIDiXVTmMIy8bEnrDR6R57kAFXFxB/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxycMPxcJszbsnjYhPHfq7U1vJXGIk3UEr9K0vZzFjdiL2VQOnttXt8xMIRAz05m0_r/exec';
 function autoSyncRow(rowData) {
   if (!GAS_URL) return;
   var params = Object.assign({ action: 'pitched', date: new Date().toISOString().slice(0, 10) }, rowData);
@@ -1143,6 +1165,12 @@ function addPitchButtons() {
 }
 
 window.addEventListener('load', function(){
+  // Show logged-in user email in header
+  try {
+    var s = JSON.parse(localStorage.getItem('uc_session') || '{}');
+    var el = document.getElementById('uc-user-badge');
+    if (el && s.email) el.textContent = s.email;
+  } catch(e) {}
   loadPitched();           // Local state first — instant
   loadPitchedFromSheet();  // Shared state from sheet — fills in teammates' pitches
   addFkPct(); addPitchButtons(); addRowClicks();

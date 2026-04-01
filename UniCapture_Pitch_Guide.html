@@ -17,6 +17,10 @@ body{font-family:-apple-system,'Inter',sans-serif;background:#EEF2F7;color:#1E29
 .back-btn{background:rgba(255,255,255,.12);color:#fff;padding:6px 14px;border-radius:7px;
   font-size:11.5px;font-weight:500;border:1px solid rgba(255,255,255,.25);text-decoration:none;transition:background .15s}
 .back-btn:hover{background:rgba(255,255,255,.22)}
+.btn-logout{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);padding:6px 14px;border-radius:7px;
+  font-size:11.5px;font-weight:500;border:1px solid rgba(255,255,255,.18);cursor:pointer;transition:all .15s}
+.btn-logout:hover{background:rgba(255,80,80,.25);color:#fff;border-color:rgba(255,100,100,.4)}
+.uc-user{font-size:11px;color:rgba(255,255,255,.55);align-self:center}
 
 /* ── Nav ── */
 .nav{background:#fff;border-bottom:2px solid #E2E8F0;padding:0 28px;display:flex;gap:0;overflow-x:auto}
@@ -146,6 +150,21 @@ td.c-amber{color:#D97706!important;font-weight:600}
 .obj-response{font-size:12px;line-height:1.65;color:#374151;position:relative;
   background:#F8FAFC;border:1px solid #E8ECF0;border-radius:7px;padding:11px 14px;padding-right:52px}
 </style>
+<script>
+/* ── Auth guard — runs before page renders ── */
+(function(){
+  var SESSION_HOURS = 8;
+  var s = localStorage.getItem('uc_session');
+  if (!s) { window.location.replace('UniCapture_Login.html'); return; }
+  try {
+    var d = JSON.parse(s);
+    if (!d.email || !d.ts || (Date.now() - d.ts) > SESSION_HOURS * 3600000) {
+      localStorage.removeItem('uc_session');
+      window.location.replace('UniCapture_Login.html');
+    }
+  } catch(e) { window.location.replace('UniCapture_Login.html'); }
+})();
+</script>
 </head>
 <body>
 
@@ -154,7 +173,11 @@ td.c-amber{color:#D97706!important;font-weight:600}
     <div class="hdr-title">UniCapture Pitch Guide</div>
     <div class="hdr-meta">404 qualifying sellers &nbsp;&middot;&nbsp; Standalone: 135 &nbsp;&middot;&nbsp; Integrated: 74 &nbsp;&middot;&nbsp; Mixed: 195</div>
   </div>
-  <a class="back-btn" href="UniCapture_Prospects_Preview.html">&#8592; Back to Dashboard</a>
+  <div style="display:flex;align-items:center;gap:10px">
+    <a class="back-btn" href="UniCapture_Prospects_Preview.html">&#8592; Back to Dashboard</a>
+    <span class="uc-user" id="uc-user-badge"></span>
+    <button class="btn-logout" onclick="(function(){localStorage.removeItem('uc_session');window.location.replace('UniCapture_Login.html');})()">Sign Out</button>
+  </div>
 </div>
 
 <div class="nav">
@@ -182,11 +205,19 @@ td.c-amber{color:#D97706!important;font-weight:600}
       <div class="pitch-label">Opening Pitch</div>
       <div class="pitch-text" id="pitch-standalone">Hi [Name], you&rsquo;re shipping [X] orders/month on Unicommerce with a [Y]% return rate &mdash; that&rsquo;s roughly &#8377;[Z]/month in potential claim losses without any video evidence to counter them.
 
-Palmonas is already live on UniCapture &mdash; capturing timestamped, AWB-linked video at every dispatch. Their team pulls dispute evidence in under 10 seconds, directly from the Unicommerce shipment record.
+Palmonas solved this without changing a single thing on the packing floor. Recording starts automatically on every barcode scan. When a claim lands, their team pulls AWB-linked video in under 10 seconds from the Unicommerce shipment record. 90&ndash;99% of disputes resolved in their favour.
 
-Your UniCapture trial is already active on your account. Create a folder with your channel code, point a camera at your dispatch station, and you&rsquo;re recording from the first shipment. No procurement cycle, no new contract.
+What your team gets from Day 1:
+&bull; Zero process change &mdash; recording triggers on scan, stops on scan
+&bull; Every shipment covered &mdash; timestamped, AWB-linked, cloud-stored
+&bull; 10-second dispute retrieval &mdash; search by AWB, SKU, or date. One-click share to Myntra/Flipkart
+&bull; Works with any IP camera or webcam &mdash; no new hardware needed
 
-90&ndash;99% of video-backed disputes are resolved in the seller&rsquo;s favour. Want me to walk you through the 5-minute go-live setup?<button class="copy-btn" onclick="copyPitch('pitch-standalone')">Copy</button></div>
+Your UniCapture trial is already active. No PO, no new contract. Three steps to go live today: create a folder with your channel code &rarr; point a camera at dispatch &rarr; scan a shipment. Recording starts automatically.
+
+Demo is already active on your account. You can start now.
+
+Want me to walk you through the 5-minute go-live setup?<button class="copy-btn" onclick="copyPitch('pitch-standalone')">Copy</button></div>
       <div class="tips-grid">
         <div class="tip-card warn">
           <div class="tip-title">Lead with the number</div>
@@ -366,13 +397,23 @@ Your UniCapture trial is already active on your account. Create a folder with yo
     </div>
     <div class="pitch-body">
       <div class="pitch-label">Opening Pitch</div>
-      <div class="pitch-text" id="pitch-integrated">Hi [Name], I can see you've already enabled item-level traceability across your facilities on Unicommerce &mdash; that puts you ahead of most sellers.
+      <div class="pitch-text" id="pitch-integrated">Hi [Name], I can see you&rsquo;ve already enabled item-level traceability across your facilities on Unicommerce &mdash; that puts you ahead of most sellers.
 
 The next step is video. You already know exactly what item was picked and packed. UniCapture records the physical moment of sealing &mdash; bridging the gap between what your WMS says and what the courier or customer claims.
 
-For a seller at your volume ([X] shipments/month), the typical outcome is a 90&ndash;99% reduction in unresolved marketplace deductions within 60 days. It plugs directly into your existing Unicommerce workflow with no process change for your ops team.
+Palmonas solved this without changing a single thing on the packing floor. Recording starts automatically on every barcode scan. When a claim lands, their team pulls AWB-linked video in under 10 seconds from the Unicommerce shipment record. 90&ndash;99% of disputes resolved in their favour.
 
-Want me to show you how it looks on the WMS you're already running?<button class="copy-btn" onclick="copyPitch('pitch-integrated')">Copy</button></div>
+What your team gets from Day 1:
+&bull; Zero process change &mdash; recording triggers on scan, stops on scan
+&bull; Every shipment covered &mdash; timestamped, AWB-linked, cloud-stored
+&bull; 10-second dispute retrieval &mdash; search by AWB, SKU, or date. One-click share to Myntra/Flipkart
+&bull; Works with any IP camera or webcam &mdash; no new hardware needed
+
+Your UniCapture trial is already active. No PO, no new contract. Three steps to go live today: create a folder with your channel code &rarr; point a camera at dispatch &rarr; scan a shipment. Recording starts automatically.
+
+Demo is already active on your account. You can start now.
+
+Want me to show you how it looks on the WMS you&rsquo;re already running?<button class="copy-btn" onclick="copyPitch('pitch-integrated')">Copy</button></div>
       <div class="tips-grid">
         <div class="tip-card info">
           <div class="tip-title">Key Differentiator</div>
@@ -493,9 +534,19 @@ Want me to show you how it looks on the WMS you're already running?<button class
       <div class="pitch-label">Opening Pitch</div>
       <div class="pitch-text" id="pitch-mixed">Hi [Name], looking at your facility setup on Unicommerce &mdash; you have [X] facilities with item tracking and [Y] without. That means a portion of your shipments go out with zero video evidence.
 
-On your dispute-heavy channels, the untracked facilities are where claims can't be defended. UniCapture covers the gap: one unified setup across all facilities, all shipments captured.
+On your dispute-heavy channels, the untracked facilities are where claims can&rsquo;t be defended. UniCapture covers the gap: one unified setup across all facilities, all shipments captured.
 
-Most sellers in this situation find that 90&ndash;99% of their unresolved disputes originate from the non-tracked facilities. Closing that gap is usually a 2&ndash;3 day project.
+Palmonas solved this without changing a single thing on the packing floor. Recording starts automatically on every barcode scan. When a claim lands, their team pulls AWB-linked video in under 10 seconds from the Unicommerce shipment record. 90&ndash;99% of disputes resolved in their favour.
+
+What your team gets from Day 1:
+&bull; Zero process change &mdash; recording triggers on scan, stops on scan
+&bull; Every shipment covered &mdash; timestamped, AWB-linked, cloud-stored
+&bull; 10-second dispute retrieval &mdash; search by AWB, SKU, or date. One-click share to Myntra/Flipkart
+&bull; Works with any IP camera or webcam &mdash; no new hardware needed
+
+Your UniCapture trial is already active. No PO, no new contract. Three steps to go live today: create a folder with your channel code &rarr; point a camera at dispatch &rarr; scan a shipment. Recording starts automatically.
+
+Demo is already active on your account. You can start now.
 
 Can I show you what full-facility coverage looks like on your account?<button class="copy-btn" onclick="copyPitch('pitch-mixed')">Copy</button></div>
       <div class="tips-grid">
@@ -737,11 +788,21 @@ Can I show you what full-facility coverage looks like on your account?<button cl
     </div>
     <div class="pitch-body">
       <div class="pitch-label">Opening Pitch</div>
-      <div class="pitch-text" id="pitch-fkmyntra">Hi [Name], if you're selling on Myntra or through Flipkart at [X] shipments/month, you're already aware that both platforms have mandated video evidence for RTO and dispute resolution.
+      <div class="pitch-text" id="pitch-fkmyntra">Hi [Name], if you&rsquo;re selling on Myntra or through Flipkart at [X] shipments/month, you&rsquo;re already aware that both platforms have mandated video evidence for RTO and dispute resolution.
 
 UniCapture is the only WMS-native video solution that auto-links capture to your AWB at dispatch and generates dispute-ready evidence in the exact format Myntra and Flipkart accept for counter-claims. Your team can raise a response in seconds instead of digging through warehouse records for hours.
 
-For sellers at your channel volume, the payback is typically within 45 days from dispute recovery alone &mdash; before you factor in platform compliance risk.
+Palmonas solved this without changing a single thing on the packing floor. Recording starts automatically on every barcode scan. When a claim lands, their team pulls AWB-linked video in under 10 seconds from the Unicommerce shipment record. 90&ndash;99% of disputes resolved in their favour.
+
+What your team gets from Day 1:
+&bull; Zero process change &mdash; recording triggers on scan, stops on scan
+&bull; Every shipment covered &mdash; timestamped, AWB-linked, cloud-stored
+&bull; 10-second dispute retrieval &mdash; search by AWB, SKU, or date. One-click share to Myntra/Flipkart
+&bull; Works with any IP camera or webcam &mdash; no new hardware needed
+
+Your UniCapture trial is already active. No PO, no new contract. Three steps to go live today: create a folder with your channel code &rarr; point a camera at dispatch &rarr; scan a shipment. Recording starts automatically.
+
+Demo is already active on your account. You can start now.
 
 We can have you live across your facilities in 1&ndash;2 days. Want to run through the setup for your specific channel mix?<button class="copy-btn" onclick="copyPitch('pitch-fkmyntra')">Copy</button></div>
       <div class="tips-grid">
@@ -1311,14 +1372,24 @@ function buildSmartPitch(d) {
   lines.push('');
 
   // ── Para 3: Social proof ──
-  lines.push(randomPeer() + ' is already live on UniCapture. 90\u201399% of their video-backed disputes are resolved in the seller\u2019s favour.');
+  lines.push(randomPeer() + ' solved this without changing a single thing on the packing floor. Recording starts automatically on every barcode scan. When a claim lands, their team pulls AWB-linked video in under 10 seconds from the Unicommerce shipment record. 90\u201399% of disputes resolved in their favour.');
   lines.push('');
 
-  // ── Para 4: Trial CTA ──
-  lines.push('Your UniCapture trial is already active on your account. Create a folder with your channel code, point a camera at your dispatch station, and you\u2019re recording from the first shipment. No procurement cycle, no new contract.');
+  // ── Para 4: What your team gets ──
+  lines.push('What your team gets from Day 1:');
+  lines.push('\u2022 Zero process change \u2014 recording triggers on scan, stops on scan');
+  lines.push('\u2022 Every shipment covered \u2014 timestamped, AWB-linked, cloud-stored');
+  lines.push('\u2022 10-second dispute retrieval \u2014 search by AWB, SKU, or date. One-click share to Myntra/Flipkart');
+  lines.push('\u2022 Works with any IP camera or webcam \u2014 no new hardware needed');
   lines.push('');
 
-  // ── Para 5: Close ──
+  // ── Para 5: Trial CTA ──
+  lines.push('Your UniCapture trial is already active. No PO, no new contract. Three steps to go live today: create a folder with your channel code \u2192 point a camera at dispatch \u2192 scan a shipment. Recording starts automatically.');
+  lines.push('');
+  lines.push('Demo is already active on your account. You can start now.');
+  lines.push('');
+
+  // ── Para 6: Close ──
   if (hasFK) {
     lines.push('Want me to walk you through the 5-minute go-live setup for your channel mix?');
   } else {
@@ -1469,7 +1540,16 @@ function addGuideRowClicks() {
   });
 }
 
-window.addEventListener('load', function() { loadPersonalizedPitch(); addGuideRowClicks(); });
+window.addEventListener('load', function() {
+  // Show logged-in user email in header
+  try {
+    var s = JSON.parse(localStorage.getItem('uc_session') || '{}');
+    var el = document.getElementById('uc-user-badge');
+    if (el && s.email) el.textContent = s.email;
+  } catch(e) {}
+  loadPersonalizedPitch();
+  addGuideRowClicks();
+});
 </script>
 
 </body>

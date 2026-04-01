@@ -2,7 +2,7 @@
  * UniCapture Prospect Dashboard — Google Sheets Auto-Sync
  * ─────────────────────────────────────────────────────────
  * Already deployed at:
- * https://script.google.com/macros/s/AKfycbwbs_xnxoK3DUjs0O_5XiOc7DHLWy1FojPSf0pIIDiXVTmMIy8bEnrDR6R57kAFXFxB/exec
+ * https://script.google.com/macros/s/AKfycbxycMPxcJszbsnjYhPHfq7U1vJXGIk3UEr9K0vZzFjdiL2VQOnttXt8xMIRAz05m0_r/exec
  *
  * To redeploy after edits: Deploy → Manage deployments → Edit → New version
  */
@@ -180,6 +180,33 @@ function doGet(e) {
         if (data[i][0]) codes.push(String(data[i][0]));
       }
       return jsonpRespond(params.callback, { status: 'ok', codes: codes });
+    } catch (err) {
+      return jsonpRespond(params.callback, { status: 'error', message: err.toString() });
+    }
+  }
+
+  // ── Login log ──
+  if (params.action === 'logLogin') {
+    try {
+      var ss        = SpreadsheetApp.openById(SHEET_ID);
+      var logSheet  = ss.getSheetByName('Login Log');
+      if (!logSheet) {
+        logSheet = ss.insertSheet('Login Log');
+        logSheet.appendRow(['Timestamp (IST)', 'Email', 'Browser / Device']);
+        logSheet.getRange('1:1').setFontWeight('bold');
+        logSheet.setFrozenRows(1);
+      }
+      // Convert UTC ISO string to IST (UTC+5:30)
+      var now     = new Date();
+      var istMs   = now.getTime() + (5.5 * 3600 * 1000);
+      var istDate = new Date(istMs);
+      var istStr  = Utilities.formatDate(istDate, 'Asia/Kolkata', 'yyyy-MM-dd HH:mm:ss');
+      logSheet.appendRow([
+        istStr,
+        params.email || '',
+        (params.ua   || '').substring(0, 150)
+      ]);
+      return jsonpRespond(params.callback, { status: 'ok' });
     } catch (err) {
       return jsonpRespond(params.callback, { status: 'error', message: err.toString() });
     }
